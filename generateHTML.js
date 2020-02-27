@@ -170,5 +170,23 @@ function generateHTML(data) {
             zoom: .75; 
           } 
          }
-      </style>`
+      </style>
+      </head>
+      <body>
+        <div class="jumbotron jumbotron-fluid">
+        <div class="container">
+          <h1 class="display-4">Hi! My name is ${answers.name}</h1>
+          <img class="avatar" src="${response.data.avatar_url}" alt="github avatar">
+          <p> My username is: ${answers.github} </p>
+          <p> My Location is: ${response.data.location} </p>
+          <p> visit my profile: ${response.data.html_url}</p>
+          <p> My blog:  ${response.data.blog} </p>
+          <p> My bio: ${response.data.bio} </p>
+          <p> My public repos:  ${response.data.public_repos} </p>
+          <p> Followers:  ${response.data.followers} </p>
+          <p> Following:  ${response.data.following} </p>
+          </div>
+      </div>
+      </body>
+      </html>`
         }
