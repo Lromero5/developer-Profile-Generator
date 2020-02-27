@@ -1,20 +1,41 @@
 const inquirer = require("inquirer");
 const fs = require("fs");
 const axios = require("axios");
+const util = require("util");
 const htmlpdf = require("html-pdf");
 
+const writeFileAsync = util.promisify(fs.writeFile);
 
 return inquirer.prompt([
+    {
+      type: "input",
+      name: "name",
+      message: "What is your name?"
+    },
     {
       type: "input",
       name: "github",
       message: "Enter your GitHub Username"
     },
-  ]).then(function(answers){
-    console.log(answers);
+    {
+      type: "checkbox",
+      message: "what is your favorite color?",
+      name: "colors",
+      choices: [
+        "green", 
+        "blue", 
+        "pink", 
+        "red",
+      ]
 
-    axios.get("https://api.github.com/users/lromero5").then(function(response){
+    },
+  ]).then(function(answers){
+    // console.log(answers);
+    const queryUrl = `https://api.github.com/users/${answers.github}`;
+
+    axios.get(queryUrl).then(function(response){
         console.log(response.data);
+
         var html = `
         <!DOCTYPE html>
         <html lang="en">
@@ -30,19 +51,28 @@ return inquirer.prompt([
           <div class="jumbotron jumbotron-fluid">
           <div class="container">
             <h1 class="display-4">Hi! My name is ${answers.name}</h1>
-            <p class="lead">I am from ${answers.location}.</p>
-            <h3>Example heading <span class="badge badge-secondary">Contact Me</span></h3>
-            <ul class="list-group">
-              <li class="list-group-item">My GitHub username is ${answers.github}</li>
-              <li class="list-group-item">LinkedIn: ${answers.linkedin}</li>
-            </ul>
-          </div>
+            <img class="avatar" src="${response.data.avatar_url}" alt="github avatar">
+            <p> My username is: ${answers.github} </p>
+            <p> My Location is: ${response.data.location} </p>
+            <p> visit my profile: ${response.data.html_url}</p>
+            <p> My blog:  ${response.data.blog} </p>
+            <p> My bio: ${response.data.bio} </p>
+            <p> My public repos:  ${response.data.public_repos} </p>
+            <p> Followers:  ${response.data.followers} </p>
+            <p> Following:  ${response.data.following} </p>
+            </div>
         </div>
         </body>
         </html>`
         
         htmlpdf.create(html).toFile("./test.pdf", function(err, res){
-            console.log(res.filename);
+            // console.log(res.filename);
+            if (err) {
+              return console.log(err);
+            }
+        
+            console.log("Success!");
+        
           });
     
 
